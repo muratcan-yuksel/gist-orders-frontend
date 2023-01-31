@@ -69,7 +69,7 @@ function index() {
       localStorage.setItem("refreshToken", refreshToken);
       setError(false);
       // Navigate to the /user page after a successful login
-      await router.push("/user");
+      isAdmin ? await router.push("/admin") : await router.push("/user");
     } catch (error) {
       console.log(error);
       setError(true);
