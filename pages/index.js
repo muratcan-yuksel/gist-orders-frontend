@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { Alert } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
+import { DataContext } from "../context/context";
 
 function index() {
   const [username, setUsername] = useState("");
@@ -12,6 +13,7 @@ function index() {
   const [error, setError] = useState(false);
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const [context, setContext] = useContext(DataContext);
 
   const refreshToken = async () => {
     try {
@@ -23,7 +25,6 @@ function index() {
         accessToken: res.data.accessToken,
         refreshToken: res.data.refreshToken,
       });
-
       return res.data;
     } catch (err) {
       console.log(err);
@@ -39,6 +40,7 @@ function index() {
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
         const data = await refreshToken();
         config.headers["authorization"] = "Bearer " + data.accessToken;
+        console.lof("refreshed");
       }
       return config;
     },
@@ -63,6 +65,7 @@ function index() {
       console.log("Refresh Token: ", refreshToken);
       console.log(userId);
       console.log(isAdmin);
+      setContext(userId);
 
       // Store the tokens in local storage or state for use in other parts of your application
       localStorage.setItem("accessToken", accessToken);
