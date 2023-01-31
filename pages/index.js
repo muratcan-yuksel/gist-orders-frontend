@@ -4,12 +4,14 @@ import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { Alert } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
+import { useRouter } from "next/router";
 
 function index() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [user, setUser] = useState(null);
+  const router = useRouter();
 
   const refreshToken = async () => {
     try {
@@ -66,6 +68,8 @@ function index() {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setError(false);
+      // Navigate to the /user page after a successful login
+      await router.push("/user");
     } catch (error) {
       console.log(error);
       setError(true);
