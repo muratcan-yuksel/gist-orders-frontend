@@ -127,6 +127,23 @@ const user = ({ products }) => {
         }
       );
       console.log(res.status);
+      getOrdersByUser();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getOrdersByUser = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/orders/user/${userId}`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      console.log(res.data);
     } catch (error) {
       console.log(error);
     }
