@@ -25,8 +25,8 @@ const user = ({ products }) => {
   const [personalization, setPersonalization] = useState();
   const [note, setNote] = useState();
   const fileInputRef = useRef(null);
-
   //form stuff ends
+  const [orders, setOrders] = useState();
 
   const router = useRouter();
   //dunno if this works
@@ -42,6 +42,7 @@ const user = ({ products }) => {
   useEffect(() => {
     getUser();
     checkAuth();
+    getOrdersByUser();
   }, []);
 
   const getUser = async () => {
@@ -63,9 +64,9 @@ const user = ({ products }) => {
 
   function returnState() {
     if (myUser) {
-      return <div>{myUser.data.name}</div>;
+      return <h1>{myUser.data.name}</h1>;
     } else {
-      return <div>Loading...</div>;
+      return <h1>Loading...</h1>;
     }
   }
 
@@ -127,7 +128,6 @@ const user = ({ products }) => {
         }
       );
       console.log(res.status);
-      getOrdersByUser();
     } catch (error) {
       console.log(error);
     }
@@ -144,130 +144,180 @@ const user = ({ products }) => {
         }
       );
       console.log(res.data);
+      setOrders(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center">
-      {returnState()}
-      {/* <Image></Image> */}
-      <div className="" style={{ width: "40%" }}>
-        <Form.Label>İsme veya koduna göre ürün arayın</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Ürün arayın"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-        <Form.Label>
-          Ürün seçin- Tek bir ürün görünse bile, uygulamanın sorunsuz çalışması
-          için lütfen ürünü tıklayarak seçin.
-        </Form.Label>
-        <Form.Select
-          aria-label="Default select example"
-          onClick={handleProductChoice}
-        >
-          {filteredProducts.map((product) => (
-            <option
-              key={product._id}
-              value={JSON.stringify({ name: product.name, id: product._id })}
-            >
-              Ürün Adı: {product.name} - Ürün Kodu: {product.code}
-            </option>
-          ))}
-        </Form.Select>
-        <Form.Group controlId="formFile" className="mb-3">
-          <Form.Label>Barkod</Form.Label>
-          <Form.Control type="file" ref={fileInputRef} />
-        </Form.Group>
-        <Form.Label>Renk Seçimi</Form.Label>
-        <Form.Select aria-label="Renk" onChange={handleColor}>
-          <option>Vidala Brown</option>
-          <option>Vidala Dark Brown</option>
-          <option>Crazy Brown</option>
-          <option>Crazy Dark Brown</option>
-          <option>Black</option>
-          <option>Crazy Grey</option>
-          <option>Özel</option>
-        </Form.Select>
-        <Form.Label>Boyut</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Boyut"
-          onChange={handleSize}
-        />{" "}
-        <Form.Label>Kişiselleştirme</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Kişiselleştirme"
-          onChange={handlePersonalization}
-        />
-        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-          <Form.Label>Eklemek istediğiniz not</Form.Label>
-          <Form.Control as="textarea" rows={3} onChange={handleNote} />
-        </Form.Group>
-        <div className="d-flex justify-content-center">
-          <Button variant="primary" onClick={handleShow}>
-            Sipariş ver
-          </Button>{" "}
+    <div className="d-flex flex-column flex-lg-row justify-content-center justify-content-md-around align-items-center">
+      <div>
+        {" "}
+        {returnState()}
+        {/* <Image></Image> */}
+        <div className="">
+          <Form.Label>İsme veya koduna göre ürün arayın</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Ürün arayın"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+          <Form.Label>
+            Ürün seçin- Tek bir ürün görünse bile, uygulamanın sorunsuz
+            çalışması için lütfen ürünü tıklayarak seçin.
+          </Form.Label>
+          <Form.Select
+            aria-label="Default select example"
+            onClick={handleProductChoice}
+          >
+            {filteredProducts.map((product) => (
+              <option
+                key={product._id}
+                value={JSON.stringify({ name: product.name, id: product._id })}
+              >
+                Ürün Adı: {product.name} - Ürün Kodu: {product.code}
+              </option>
+            ))}
+          </Form.Select>
+          <Form.Group controlId="formFile" className="mb-3">
+            <Form.Label>Barkod</Form.Label>
+            <Form.Control type="file" ref={fileInputRef} />
+          </Form.Group>
+          <Form.Label>Renk Seçimi</Form.Label>
+          <Form.Select aria-label="Renk" onChange={handleColor}>
+            <option>Vidala Brown</option>
+            <option>Vidala Dark Brown</option>
+            <option>Crazy Brown</option>
+            <option>Crazy Dark Brown</option>
+            <option>Black</option>
+            <option>Crazy Grey</option>
+            <option>Özel</option>
+          </Form.Select>
+          <Form.Label>Boyut</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Boyut"
+            onChange={handleSize}
+          />{" "}
+          <Form.Label>Kişiselleştirme</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Kişiselleştirme"
+            onChange={handlePersonalization}
+          />
+          <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+            <Form.Label>Eklemek istediğiniz not</Form.Label>
+            <Form.Control as="textarea" rows={3} onChange={handleNote} />
+          </Form.Group>
+          <div className="d-flex justify-content-center">
+            <Button variant="primary" onClick={handleShow}>
+              Sipariş ver
+            </Button>{" "}
+          </div>
+          {/* modal */}
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Sipariş onay</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="d-flex flex-column ">
+                {" "}
+                <h5>Sipariş detayı</h5>
+                <div className="d-flex ">
+                  <div>Ürün adı: </div>
+                  {product && <div>{product.name}</div>}{" "}
+                </div>
+                <div className="d-flex ">
+                  <div>Ürün kodu: </div>
+                  {product && <div>{product.id}</div>}{" "}
+                </div>
+                <div className="d-flex ">
+                  <div>Renk: </div>
+                  {color && <div>{color}</div>}
+                </div>
+                <div className="d-flex ">
+                  <div>Boyut: </div>
+                  {size && <div>{size}</div>}
+                </div>
+                <div className="d-flex ">
+                  <div>Kişiselleştirme: </div>
+                  {personalization && <div>{personalization}</div>}
+                </div>
+                <div className="d-flex ">
+                  <div>Not: </div>
+                  {note && <div>{note}</div>}
+                </div>
+              </div>{" "}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Vazgeç
+              </Button>
+              <Button
+                variant="success"
+                onClick={() => {
+                  handleClose();
+                  handleSubmit();
+                }}
+              >
+                Onayla
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-        {/* modal */}
-        <Modal
-          show={show}
-          onHide={handleClose}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Sipariş onay</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="d-flex flex-column ">
-              {" "}
-              <h5>Sipariş detayı</h5>
-              <div className="d-flex ">
-                <div>Ürün adı: </div>
-                {product && <div>{product.name}</div>}{" "}
+      </div>
+      <div>
+        <h2>Siparişler</h2>
+        {/* {orders &&
+          orders.data.map((order) => (
+            <div key={order._id}>
+              <div className="d-flex flex-column">
+                <div className="d-flex">
+                  <div>Ürün adı: </div>
+                  <div>{order.product.name}</div>
+
+                  <div>Ürün kodu: </div>
+                  <div>{order.product.id}</div>
+
+                  <div>Renk: </div>
+                  <div>{order.color}</div>
+
+                  <div>Boyut: </div>
+                  <div>{order.size}</div>
+
+                  <div>Kişiselleştirme: </div>
+
+                  <div>{order.personalization}</div>
+
+                  <div>Not: </div>
+                  <div>{order.note}</div>
+
+                  <div>Sipariş tarihi: </div>
+
+                  <div>{order.createdAt}</div>
+
+                  <div>Sipariş durumu: </div>
+
+                  <div>{order.status}</div>
+
+                  <div>Sipariş numarası: </div>
+
+                  <div>{order._id}</div>
+
+                  <div>Sipariş barkodu: </div>
+
+                  <div>{order.barcode}</div>
+                </div>
               </div>
-              <div className="d-flex ">
-                <div>Ürün kodu: </div>
-                {product && <div>{product.id}</div>}{" "}
-              </div>
-              <div className="d-flex ">
-                <div>Renk: </div>
-                {color && <div>{color}</div>}
-              </div>
-              <div className="d-flex ">
-                <div>Boyut: </div>
-                {size && <div>{size}</div>}
-              </div>
-              <div className="d-flex ">
-                <div>Kişiselleştirme: </div>
-                {personalization && <div>{personalization}</div>}
-              </div>
-              <div className="d-flex ">
-                <div>Not: </div>
-                {note && <div>{note}</div>}
-              </div>
-            </div>{" "}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Vazgeç
-            </Button>
-            <Button
-              variant="success"
-              onClick={() => {
-                handleClose();
-                handleSubmit();
-              }}
-            >
-              Onayla
-            </Button>
-          </Modal.Footer>
-        </Modal>
+            </div>
+          ))} */}
       </div>
     </div>
   );

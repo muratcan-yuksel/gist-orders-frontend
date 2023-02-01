@@ -68,6 +68,8 @@ function index() {
       console.log(isAdmin);
       //set user id in the context
       setContext(userId);
+      //set it in local storage
+      localStorage.setItem("userId", userId);
 
       // Store the tokens in local storage or state for use in other parts of your application
       localStorage.setItem("accessToken", accessToken);
