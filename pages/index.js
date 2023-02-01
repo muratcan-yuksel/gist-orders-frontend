@@ -17,6 +17,7 @@ function index() {
 
   const refreshToken = async () => {
     try {
+      console.log("refresh called");
       const res = await axios.post("http://localhost:3000/auth/refresh", {
         token: user.refreshToken,
       });
@@ -30,7 +31,7 @@ function index() {
       console.log(err);
     }
   };
-
+  // refreshToken();
   const axiosJWT = axios.create();
 
   axiosJWT.interceptors.request.use(
@@ -40,7 +41,7 @@ function index() {
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
         const data = await refreshToken();
         config.headers["authorization"] = "Bearer " + data.accessToken;
-        console.lof("refreshed");
+        console.log("refreshed");
       }
       return config;
     },
@@ -65,6 +66,7 @@ function index() {
       console.log("Refresh Token: ", refreshToken);
       console.log(userId);
       console.log(isAdmin);
+      //set user id in the context
       setContext(userId);
 
       // Store the tokens in local storage or state for use in other parts of your application

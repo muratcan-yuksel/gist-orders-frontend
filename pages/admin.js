@@ -4,15 +4,17 @@ import jwt_decode from "jwt-decode";
 import { DataContext } from "../context/context";
 
 const AdminPage = () => {
+  // console.log(localStorage.getItem("refreshToken"));
   const router = useRouter();
   //   const [user, setUser] = useState(null);
+  //user id is in the context
   const [context, setContext] = useContext(DataContext);
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
     // setUser({ accessToken, refreshToken });
-    console.log(context);
+
     // Check if the user is an admin
     const decodedToken = jwt_decode(accessToken);
     if (!decodedToken.isAdmin) {
