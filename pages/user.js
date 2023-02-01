@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { DataContext } from "../context/context";
@@ -20,6 +20,12 @@ const user = ({ products }) => {
   //modal stuff ends
   //form stuff starts
   const [product, setProduct] = useState();
+  const [color, setColor] = useState("Vidala Brown");
+  const [size, setSize] = useState();
+  const [personalization, setPersonalization] = useState();
+  const [note, setNote] = useState();
+  const fileInputRef = useRef(null);
+
   //form stuff ends
 
   const router = useRouter();
@@ -79,10 +85,57 @@ const user = ({ products }) => {
     setProduct(JSON.parse(event.target.value));
   };
 
+  const handleColor = (event) => {
+    console.log(event.target.value);
+    setColor(event.target.value);
+  };
+
+  const handleSize = (event) => {
+    console.log(event.target.value);
+    setSize(event.target.value);
+  };
+
+  const handlePersonalization = (event) => {
+    console.log(event.target.value);
+    setPersonalization(event.target.value);
+  };
+
+  const handleNote = (event) => {
+    console.log(event.target.value);
+    setNote(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    // event.preventDefault();
+    const formData = new FormData();
+    formData.append("user", userId);
+    formData.append("stockCode", product.id);
+    formData.append("color", color);
+    formData.append("size", size);
+    formData.append("personalization", personalization);
+    formData.append("note", note);
+    formData.append("file", fileInputRef.current.files[0]);
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/orders/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      console.log(res.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="d-flex flex-column justify-content-center align-items-center">
       {returnState()}
-      <Image></Image>
+      {/* <Image></Image> */}
       <div className="" style={{ width: "40%" }}>
         <Form.Label>İsme veya koduna göre ürün arayın</Form.Label>
         <Form.Control
@@ -110,10 +163,10 @@ const user = ({ products }) => {
         </Form.Select>
         <Form.Group controlId="formFile" className="mb-3">
           <Form.Label>Barkod</Form.Label>
-          <Form.Control type="file" />
+          <Form.Control type="file" ref={fileInputRef} />
         </Form.Group>
         <Form.Label>Renk Seçimi</Form.Label>
-        <Form.Select aria-label="Renk">
+        <Form.Select aria-label="Renk" onChange={handleColor}>
           <option>Vidala Brown</option>
           <option>Vidala Dark Brown</option>
           <option>Crazy Brown</option>
@@ -123,12 +176,20 @@ const user = ({ products }) => {
           <option>Özel</option>
         </Form.Select>
         <Form.Label>Boyut</Form.Label>
-        <Form.Control type="text" placeholder="Boyut" />{" "}
+        <Form.Control
+          type="text"
+          placeholder="Boyut"
+          onChange={handleSize}
+        />{" "}
         <Form.Label>Kişiselleştirme</Form.Label>
-        <Form.Control type="text" placeholder="Kişiselleştirme" />
+        <Form.Control
+          type="text"
+          placeholder="Kişiselleştirme"
+          onChange={handlePersonalization}
+        />
         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
           <Form.Label>Eklemek istediğiniz not</Form.Label>
-          <Form.Control as="textarea" rows={3} />
+          <Form.Control as="textarea" rows={3} onChange={handleNote} />
         </Form.Group>
         <div className="d-flex justify-content-center">
           <Button variant="primary" onClick={handleShow}>
@@ -146,14 +207,48 @@ const user = ({ products }) => {
             <Modal.Title>Sipariş onay</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            I will not close if you click outside me. Don't even try to press
-            escape key.
+            <div className="d-flex flex-column ">
+              {" "}
+              <h5>Sipariş detayı</h5>
+              <div className="d-flex ">
+                <div>Ürün adı: </div>
+                {product && <div>{product.name}</div>}{" "}
+              </div>
+              <div className="d-flex ">
+                <div>Ürün kodu: </div>
+                {product && <div>{product.id}</div>}{" "}
+              </div>
+              <div className="d-flex ">
+                <div>Renk: </div>
+                {color && <div>{color}</div>}
+              </div>
+              <div className="d-flex ">
+                <div>Boyut: </div>
+                {size && <div>{size}</div>}
+              </div>
+              <div className="d-flex ">
+                <div>Kişiselleştirme: </div>
+                {personalization && <div>{personalization}</div>}
+              </div>
+              <div className="d-flex ">
+                <div>Not: </div>
+                {note && <div>{note}</div>}
+              </div>
+            </div>{" "}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Vazgeç
             </Button>
-            <Button variant="success">Onayla</Button>
+            <Button
+              variant="success"
+              onClick={() => {
+                handleClose();
+                handleSubmit();
+              }}
+            >
+              Onayla
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>
