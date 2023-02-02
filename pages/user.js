@@ -1,16 +1,17 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { DataContext } from "../context/context";
+// import { DataContext } from "../context/context";
 import { createClient } from "next-sanity";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
+import { getCookie } from "cookies-next";
 
 const user = ({ products }) => {
-  const [context, setContext] = useContext(DataContext);
-  const userId = context;
+  // const [context, setContext] = useContext(DataContext);
+  const userId = getCookie("userId");
   const [myUser, setMyUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   //modal stuff
@@ -28,20 +29,21 @@ const user = ({ products }) => {
   //form stuff ends
   const [orders, setOrders] = useState();
 
+  console.log(getCookie("userId"));
   const router = useRouter();
   //dunno if this works
-  const checkAuth = () => {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (!refreshToken) {
-      return router.push("/error");
-    }
-  };
+  // const checkAuth = () => {
+  //   const refreshToken = localStorage.getItem("refreshToken");
+  //   if (!refreshToken) {
+  //     return router.push("/error");
+  //   }
+  // };
   console.log(userId);
   console.log(products);
 
   useEffect(() => {
     getUser();
-    checkAuth();
+    // checkAuth();
     getOrdersByUser();
   }, []);
 
@@ -51,7 +53,7 @@ const user = ({ products }) => {
         `http://localhost:3000/users/${userId}`,
         {
           headers: {
-            authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            authorization: `Bearer ${getCookie("accessToken")}`,
           },
         }
       );

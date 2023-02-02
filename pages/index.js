@@ -6,6 +6,7 @@ import { Alert } from "react-bootstrap";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
 import { DataContext } from "../context/context";
+import { setCookie } from "cookies-next";
 
 function index() {
   const [username, setUsername] = useState("");
@@ -67,11 +68,14 @@ function index() {
       console.log(userId);
       console.log(isAdmin);
       //set user id in the context
-      setContext(userId);
+      // setContext(userId);
       //set it in local storage
-      localStorage.setItem("userId", userId);
+      //local storages don't work on nextjs
 
-      // Store the tokens in local storage or state for use in other parts of your application
+      // localStorage.setItem("userId", userId);
+      setCookie("userId", userId);
+      setCookie("accessToken", accessToken);
+      // // Store the tokens in local storage or state for use in other parts of your application
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setError(false);
