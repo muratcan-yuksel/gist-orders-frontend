@@ -75,9 +75,10 @@ function index() {
       // localStorage.setItem("userId", userId);
       setCookie("userId", userId);
       setCookie("accessToken", accessToken);
+      setCookie("refreshToken", refreshToken);
       // // Store the tokens in local storage or state for use in other parts of your application
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      // localStorage.setItem("accessToken", accessToken);
+      // localStorage.setItem("refreshToken", refreshToken);
       setError(false);
       // Navigate to the /user page after a successful login
       isAdmin ? await router.push("/admin") : await router.push("/user");

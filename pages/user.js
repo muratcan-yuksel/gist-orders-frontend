@@ -29,21 +29,21 @@ const user = ({ products }) => {
   //form stuff ends
   const [orders, setOrders] = useState();
 
-  console.log(getCookie("userId"));
   const router = useRouter();
-  //dunno if this works
-  // const checkAuth = () => {
-  //   const refreshToken = localStorage.getItem("refreshToken");
-  //   if (!refreshToken) {
-  //     return router.push("/error");
-  //   }
-  // };
+
+  // dunno if this works
+  const checkAuth = () => {
+    const refreshToken = getCookie("refreshToken");
+    if (!refreshToken) {
+      router.push("/error");
+    }
+  };
   console.log(userId);
   console.log(products);
 
   useEffect(() => {
     getUser();
-    // checkAuth();
+    checkAuth();
     getOrdersByUser();
   }, []);
 
@@ -108,8 +108,18 @@ const user = ({ products }) => {
     setNote(event.target.value);
   };
 
+  //controls the first button that opens the modal
+  const handleFormCheck = () => {
+    if (!product || !color || !size || !fileInputRef.current.files[0]) {
+      alert("Lütfen gerekli tüm alanları doldurunuz.");
+    } else {
+      handleShow();
+    }
+  };
+  //controls the modal modal
   const handleSubmit = async (event) => {
     // event.preventDefault();
+
     const formData = new FormData();
     formData.append("user", userId);
     formData.append("stockCode", product.id);
@@ -125,7 +135,7 @@ const user = ({ products }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            authorization: `Bearer ${getCookie("accessToken")}`,
           },
         }
       );
@@ -141,7 +151,7 @@ const user = ({ products }) => {
         `http://localhost:3000/orders/user/${userId}`,
         {
           headers: {
-            authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            authorization: `Bearer ${getCookie("accessToken")}`,
           },
         }
       );
@@ -214,7 +224,13 @@ const user = ({ products }) => {
             <Form.Control as="textarea" rows={3} onChange={handleNote} />
           </Form.Group>
           <div className="d-flex justify-content-center">
-            <Button variant="primary" onClick={handleShow}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                // handleShow();
+                handleFormCheck();
+              }}
+            >
               Sipariş ver
             </Button>{" "}
           </div>
