@@ -9,7 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 
-const user = ({ products }) => {
+const user = ({ products, orders }) => {
   // const [context, setContext] = useContext(DataContext);
   const userId = getCookie("userId");
   const [myUser, setMyUser] = useState(null);
@@ -27,7 +27,7 @@ const user = ({ products }) => {
   const [note, setNote] = useState();
   const fileInputRef = useRef(null);
   //form stuff ends
-  const [orders, setOrders] = useState();
+  // const [orders, setOrders] = useState();
 
   const router = useRouter();
 
@@ -123,6 +123,7 @@ const user = ({ products }) => {
     const formData = new FormData();
     formData.append("user", userId);
     formData.append("stockCode", product.id);
+    formData.append("name", product.name);
     formData.append("color", color);
     formData.append("size", size);
     formData.append("personalization", personalization);
@@ -156,7 +157,8 @@ const user = ({ products }) => {
         }
       );
       console.log(res.data);
-      setOrders(res.data);
+      console.log(userId);
+      console.log(orders);
     } catch (error) {
       console.log(error);
     }
@@ -293,16 +295,16 @@ const user = ({ products }) => {
       </div>
       <div>
         <h2>Siparişler</h2>
-        {/* {orders &&
+        {orders &&
           orders.data.map((order) => (
             <div key={order._id}>
               <div className="d-flex flex-column">
                 <div className="d-flex">
-                  <div>Ürün adı: </div>
-                  <div>{order.product.name}</div>
-
+                  {/* <div>Ürün adı: </div>
+                  <div>{order.product.name}</div> */}
+                  {/* 
                   <div>Ürün kodu: </div>
-                  <div>{order.product.id}</div>
+                  <div>{order.product.id}</div> */}
 
                   <div>Renk: </div>
                   <div>{order.color}</div>
@@ -335,7 +337,7 @@ const user = ({ products }) => {
                 </div>
               </div>
             </div>
-          ))} */}
+          ))}
       </div>
     </div>
   );
@@ -352,10 +354,14 @@ const client = createClient({
 
 export async function getStaticProps() {
   const products = await client.fetch(`*[_type == "product"]`);
+  const orders = await axios.get(
+    "http://localhost:3000/orders/user/63d6edb95136e80b144a07f0"
+  );
 
   return {
     props: {
       products,
+      orders: orders.data,
     },
   };
 }
