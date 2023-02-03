@@ -170,19 +170,24 @@ const user = ({ products }) => {
   //get request to http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a
   //to download the file
   const downloadFile = async (event) => {
-    // console.log(event.target.value);
     try {
       const res = await axios.get(
-        `http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a`,
+        `http://localhost:3000/orders/download/63dcb17f0b62b61f8c307227`,
         {
+          responseType: "blob",
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
           },
         }
       );
-      console.log(res);
+
+      const blob = new Blob([res.data], { type: res.data.type });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "file.pdf";
+      link.click();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
