@@ -169,10 +169,10 @@ const user = ({ products }) => {
 
   //get request to http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a
   //to download the file
-  const downloadFile = async (event) => {
+  const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/orders/download/63dcb17f0b62b61f8c307227`,
+        `http://localhost:3000/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
@@ -369,8 +369,9 @@ const user = ({ products }) => {
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş barkodu: </div>
-                  <Image src={`/${order.file}`} width={100} height={100} />
-                  <div>{order.file}</div>
+                  {/* <Image src={`/${order.file}`} width={100} height={100} />
+                  <div>{order.file}</div> */}
+                  <button onClick={() => downloadFile(order._id)}>İndir</button>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş durumu: </div>
@@ -380,7 +381,6 @@ const user = ({ products }) => {
             </div>
           ))}
       </div>
-      <button onClick={downloadFile}>btn</button>
     </div>
   );
 };
