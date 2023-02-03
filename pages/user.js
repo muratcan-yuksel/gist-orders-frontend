@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
+import Stack from "react-bootstrap/Stack";
 
 const user = ({ products }) => {
   // const [context, setContext] = useContext(DataContext);
@@ -166,8 +167,27 @@ const user = ({ products }) => {
     }
   };
 
+  //get request to http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a
+  //to download the file
+  const downloadFile = async (event) => {
+    // console.log(event.target.value);
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a`,
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div className="d-flex flex-column flex-lg-row justify-content-center justify-content-md-around align-items-center">
+    <div className="d-flex flex-column flex-lg-row justify-content-center justify-content-md-around align-items-start">
       <div>
         {" "}
         {returnState()}
@@ -304,74 +324,58 @@ const user = ({ products }) => {
         {orders &&
           orders.data.map((order) => (
             <div key={order._id}>
-              <div
-                style={{ border: "2px solid black" }}
-                className="d-flex flex-column"
-              >
-                <div className="d-flex flex-row justify-content-around">
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Ürün adı: </div>
-                    <div>{order.name}</div>
-                  </div>
+              <div style={{ border: "2px solid black" }}>
+                <Stack direction="horizontal" gap={3}>
+                  <div>Ürün adı: </div>
+                  <div>{order.name}</div>
+                </Stack>
+                <Stack direction="horizontal" gap={3}>
+                  <div>Ürün kodu: </div>
+                  <div>{order.stockCode}</div>
+                </Stack>
+                <Stack direction="horizontal" gap={3}>
+                  <div>Renk: </div>
+                  <div>{order.color}</div>
+                </Stack>
+                <Stack direction="horizontal" gap={3}>
+                  <div>Boyut: </div>
+                  <div>{order.size}</div>
+                </Stack>
+                <Stack direction="horizontal" gap={3}>
+                  <div>Kişiselleştirme: </div>
 
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Ürün kodu: </div>
-                    <div>{order.stockCode}</div>
-                  </div>
-
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Renk: </div>
-                    <div>{order.color}</div>
-                  </div>
-                </div>
-                <div className="d-flex flex-row">
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Boyut: </div>
-                    <div>{order.size}</div>
-                  </div>
-
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Kişiselleştirme: </div>
-
-                    <div>{order.personalization}</div>
-                  </div>
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Not: </div>
-                    <div>{order.note}</div>
-                  </div>
-                </div>
-
-                <div className="d-flex flex-row">
-                  {" "}
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Sipariş tarihi: </div>
-                    <div>{order.createdAt}</div>
-                  </div>
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Sipariş durumu: </div>
-                    <div>{order.status}</div>
-                  </div>
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Sipariş numarası: </div>
-                    <div>{order._id}</div>
-                  </div>
-                </div>
-
-                <div className="d-flex flex-row">
-                  {" "}
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Sipariş barkodu: </div>
-                    <div>{order.barcode}</div>
-                  </div>
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <div>Sipariş durumu: </div>
-                    <div>{order.status}</div>
-                  </div>
-                </div>
+                  <div>{order.personalization}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Not: </div>
+                  <div>{order.note}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Sipariş tarihi: </div>
+                  <div>{order.createdAt}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Sipariş durumu: </div>
+                  <div>{order.status}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Sipariş numarası: </div>
+                  <div>{order._id}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Sipariş barkodu: </div>
+                  <Image src={`/${order.file}`} width={100} height={100} />
+                  <div>{order.file}</div>
+                </Stack>{" "}
+                <Stack direction="horizontal" gap={3}>
+                  <div>Sipariş durumu: </div>
+                  <div>{order.status}</div>
+                </Stack>
               </div>
             </div>
           ))}
       </div>
+      <button onClick={downloadFile}>btn</button>
     </div>
   );
 };
