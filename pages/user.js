@@ -9,7 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 
-const user = ({ products, orders }) => {
+const user = ({ products }) => {
   // const [context, setContext] = useContext(DataContext);
   const userId = getCookie("userId");
   const [myUser, setMyUser] = useState(null);
@@ -27,7 +27,7 @@ const user = ({ products, orders }) => {
   const [note, setNote] = useState();
   const fileInputRef = useRef(null);
   //form stuff ends
-  // const [orders, setOrders] = useState();
+  const [orders, setOrders] = useState();
 
   const router = useRouter();
 
@@ -59,6 +59,7 @@ const user = ({ products, orders }) => {
       );
       setMyUser(returnedUser.data);
       console.log(returnedUser.data);
+      getOrdersByUser();
     } catch (error) {
       console.log(error);
     }
@@ -122,7 +123,7 @@ const user = ({ products, orders }) => {
 
     const formData = new FormData();
     formData.append("user", userId);
-    formData.append("stockCode", product.id);
+    formData.append("stockCode", product.code);
     formData.append("name", product.name);
     formData.append("color", color);
     formData.append("size", size);
@@ -159,6 +160,7 @@ const user = ({ products, orders }) => {
       console.log(res.data);
       console.log(userId);
       console.log(orders);
+      setOrders(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -189,7 +191,11 @@ const user = ({ products, orders }) => {
             {filteredProducts.map((product) => (
               <option
                 key={product._id}
-                value={JSON.stringify({ name: product.name, id: product._id })}
+                value={JSON.stringify({
+                  name: product.name,
+                  id: product._id,
+                  code: product.code,
+                })}
               >
                 Ürün Adı: {product.name} - Ürün Kodu: {product.code}
               </option>
@@ -298,42 +304,69 @@ const user = ({ products, orders }) => {
         {orders &&
           orders.data.map((order) => (
             <div key={order._id}>
-              <div className="d-flex flex-column">
-                <div className="d-flex">
-                  {/* <div>Ürün adı: </div>
-                  <div>{order.product.name}</div> */}
-                  {/* 
-                  <div>Ürün kodu: </div>
-                  <div>{order.product.id}</div> */}
+              <div
+                style={{ border: "2px solid black" }}
+                className="d-flex flex-column"
+              >
+                <div className="d-flex flex-row justify-content-around">
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Ürün adı: </div>
+                    <div>{order.name}</div>
+                  </div>
 
-                  <div>Renk: </div>
-                  <div>{order.color}</div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Ürün kodu: </div>
+                    <div>{order.stockCode}</div>
+                  </div>
 
-                  <div>Boyut: </div>
-                  <div>{order.size}</div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Renk: </div>
+                    <div>{order.color}</div>
+                  </div>
+                </div>
+                <div className="d-flex flex-row">
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Boyut: </div>
+                    <div>{order.size}</div>
+                  </div>
 
-                  <div>Kişiselleştirme: </div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Kişiselleştirme: </div>
 
-                  <div>{order.personalization}</div>
+                    <div>{order.personalization}</div>
+                  </div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Not: </div>
+                    <div>{order.note}</div>
+                  </div>
+                </div>
 
-                  <div>Not: </div>
-                  <div>{order.note}</div>
+                <div className="d-flex flex-row">
+                  {" "}
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Sipariş tarihi: </div>
+                    <div>{order.createdAt}</div>
+                  </div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Sipariş durumu: </div>
+                    <div>{order.status}</div>
+                  </div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Sipariş numarası: </div>
+                    <div>{order._id}</div>
+                  </div>
+                </div>
 
-                  <div>Sipariş tarihi: </div>
-
-                  <div>{order.createdAt}</div>
-
-                  <div>Sipariş durumu: </div>
-
-                  <div>{order.status}</div>
-
-                  <div>Sipariş numarası: </div>
-
-                  <div>{order._id}</div>
-
-                  <div>Sipariş barkodu: </div>
-
-                  <div>{order.barcode}</div>
+                <div className="d-flex flex-row">
+                  {" "}
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Sipariş barkodu: </div>
+                    <div>{order.barcode}</div>
+                  </div>
+                  <div className="d-flex flex-column justify-content-center align-items-center">
+                    <div>Sipariş durumu: </div>
+                    <div>{order.status}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -354,14 +387,14 @@ const client = createClient({
 
 export async function getStaticProps() {
   const products = await client.fetch(`*[_type == "product"]`);
-  const orders = await axios.get(
-    "http://localhost:3000/orders/user/63d6edb95136e80b144a07f0"
-  );
+  // const orders = await axios.get(
+  //   "http://localhost:3000/orders/user/63d6edb95136e80b144a07f0"
+  // );
 
   return {
     props: {
       products,
-      orders: orders.data,
+      // orders: orders.data,
     },
   };
 }
