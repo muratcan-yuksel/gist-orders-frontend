@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
 import { DataContext } from "../context/context";
+import { getCookie } from "cookies-next";
 
 const AdminPage = () => {
   // console.log(localStorage.getItem("refreshToken"));
@@ -11,8 +12,8 @@ const AdminPage = () => {
   const [context, setContext] = useContext(DataContext);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+    const accessToken = getCookie("accessToken");
+    const refreshToken = getCookie("refreshToken");
     // setUser({ accessToken, refreshToken });
 
     // Check if the user is an admin

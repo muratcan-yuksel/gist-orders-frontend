@@ -7,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
-import { getCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import Stack from "react-bootstrap/Stack";
 import Alert from "react-bootstrap/Alert";
 
@@ -32,22 +32,48 @@ const user = ({ products }) => {
   const [orders, setOrders] = useState();
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderFail, setOrderFail] = useState(false);
-
+  const [accessToken, setAccessToken] = useState(getCookie("accessToken"));
+  const [refreshToken, setRefreshToken] = useState(getCookie("refreshToken"));
   const router = useRouter();
 
+  const generateTokens = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/auth/refresh",
+        {
+          token: refreshToken,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setAccessToken(response.data.accessToken);
+      setRefreshToken(response.data.refreshToken);
+      setCookie("accessToken", response.data.accessToken);
+      setCookie("refreshToken", response.data.refreshToken);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //call the function in every 4 mins
+  setInterval(generateTokens, 240000);
   // dunno if this works
   const checkAuth = () => {
-    const refreshToken = getCookie("refreshToken");
-    if (!refreshToken) {
+    const accessToken = getCookie("accessToken");
+    if (!accessToken) {
       router.push("/error");
     }
+    console.log(accessToken);
   };
   console.log(userId);
   console.log(products);
 
   useEffect(() => {
-    getUser();
     checkAuth();
+    getUser();
     getOrdersByUser();
   }, []);
 
