@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { getCookie } from "cookies-next";
 import Stack from "react-bootstrap/Stack";
+import Alert from "react-bootstrap/Alert";
 
 const user = ({ products }) => {
   // const [context, setContext] = useContext(DataContext);
@@ -29,6 +30,8 @@ const user = ({ products }) => {
   const fileInputRef = useRef(null);
   //form stuff ends
   const [orders, setOrders] = useState();
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderFail, setOrderFail] = useState(false);
 
   const router = useRouter();
 
@@ -118,7 +121,7 @@ const user = ({ products }) => {
       handleShow();
     }
   };
-  //controls the modal modal
+  //controls the modal
   const handleSubmit = async (event) => {
     // event.preventDefault();
 
@@ -144,8 +147,18 @@ const user = ({ products }) => {
         }
       );
       console.log(res.status);
+      if (res.status === 201) {
+        setOrderSuccess(true);
+        setTimeout(() => {
+          setOrderSuccess(false);
+        }, 3000);
+      }
     } catch (error) {
       console.log(error);
+      setOrderFail(true);
+      setTimeout(() => {
+        setOrderFail(false);
+      }, 3000);
     }
   };
 
@@ -257,7 +270,7 @@ const user = ({ products }) => {
             <Form.Label>Eklemek istediğiniz not</Form.Label>
             <Form.Control as="textarea" rows={3} onChange={handleNote} />
           </Form.Group>
-          <div className="d-flex justify-content-center">
+          <div className="d-flex flex-column justify-content-center">
             <Button
               variant="primary"
               onClick={() => {
@@ -267,6 +280,16 @@ const user = ({ products }) => {
             >
               Sipariş ver
             </Button>{" "}
+            {orderFail && (
+              <Alert key="danger" variant="danger">
+                Sipariş başarısız oldu. Tekrar deneyin.
+              </Alert>
+            )}
+            {orderSuccess && (
+              <Alert key="success" variant="success">
+                Siparişiniz başarıyla bize ulaşmıştır.
+              </Alert>
+            )}
           </div>
           {/* modal */}
           <Modal
