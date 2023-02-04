@@ -3,9 +3,6 @@ import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
 import { getCookie, setCookie } from "cookies-next";
 import axios from "axios";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import Button from "react-bootstrap/esm/Button";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -25,7 +22,7 @@ const AdminPage = () => {
         },
         {
           headers: {
-            authorization: `Bearer ${getCookie("accessToken")}`,
+            authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -143,7 +140,7 @@ const AdminPage = () => {
       {returnState()}
 
       <div className="d-flex flex-wrap"> {returnClients()}</div>
-      <div>
+      <div style={{ margin: "1rem" }}>
         <label style={{ marginRight: "10px" }} htmlFor="">
           Ödenen Tutar
         </label>
