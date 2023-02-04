@@ -5,6 +5,7 @@ import { getCookie, setCookie } from "cookies-next";
 import axios from "axios";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import Button from "react-bootstrap/esm/Button";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -13,6 +14,7 @@ const AdminPage = () => {
   const [myUser, setMyUser] = useState(null);
   const router = useRouter();
   const [clients, setClients] = useState();
+  const [orders, setOrders] = useState();
 
   const generateTokens = async () => {
     try {
@@ -80,15 +82,37 @@ const AdminPage = () => {
     }
   };
 
+  const clientOrders = async (id) => {
+    try {
+      const orders = await axios.get(
+        `http://localhost:3000/orders/user/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(orders.data);
+      setOrders(orders.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   function returnClients() {
     if (clients) {
       return clients.data.map((client) => {
         //don't return the admin
         if (client.isAdmin == false) {
           return (
-            <Tab key={client._id} eventKey={client._id} title={client.name}>
+            <button
+              onClick={() => clientOrders(client._id)}
+              style={{ margin: "10px", border: "2px solid black" }}
+              key={client._id}
+            >
               <h1>{client.name}</h1>
-            </Tab>
+              <h2>Borç: {client.toPay}</h2>
+            </button>
           );
         }
       });
@@ -117,33 +141,31 @@ const AdminPage = () => {
       <h1>Admin Paneli</h1>
       {/* Rest of your admin page code */}
       {returnState()}
-      <Tabs
-        defaultActiveKey="siparişler"
-        id="uncontrolled-tab-example"
-        className="mb-3"
-      >
-        <Tab eventKey="siparişler" title="Siparişler">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
-          eveniet nam labore accusantium minima quibusdam maxime laboriosam, est
-          officia dolorum facilis doloremque quisquam, magnam sint cumque
-          tempora error expedita inventore!
-        </Tab>
-        {/* {clients &&
-          clients.map((client) => {
-            return (
-              <Tab eventKey={client._id} title={client.name}>
-                <h1>{client.name}</h1>
-              </Tab>
-            );
-          })} */}
-        {returnClients()}
-        <Tab eventKey="profile" title="Profile">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
-          eveniet nam labore accusantium minima quibusdam maxime laboriosam, est
-          officia dolorum facilis doloremque quisquam, magnam sint cumque
-          tempora error expedita inventore!
-        </Tab>
-      </Tabs>
+
+      <div className="d-flex flex-wrap"> {returnClients()}</div>
+      {orders &&
+        orders.data.map((order) => {
+          return (
+            <div
+              style={{
+                border: "1px solid black",
+                marginBottom: "10px",
+                padding: "1rem",
+              }}
+              key={order._id}
+            >
+              <div>Ürün adı: {order.name}</div>
+              <div>Ürün kodu: {order.stockCode}</div>
+              <div>Sipariş tarihi: {order.createdAt}</div>
+              <div>Ürün fiyatı: {order.price}</div>
+              <div>Renk: {order.color} </div>
+              <div>Boyut: {order.size} </div>
+              <div>Adet: {order.quantity} </div>
+              <div>Kişiselleştirme: {order.personalization} </div>
+              <div>Not: {order.note} </div>
+            </div>
+          );
+        })}
     </div>
   );
 };
