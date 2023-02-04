@@ -131,6 +131,7 @@ const user = ({ products }) => {
     formData.append("personalization", personalization);
     formData.append("note", note);
     formData.append("file", fileInputRef.current.files[0]);
+    formData.append("price", product.price);
     try {
       const res = await axios.post(
         "http://localhost:3000/orders/create",
@@ -370,8 +371,8 @@ const user = ({ products }) => {
                   <div>{order.createdAt}</div>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
-                  <div>Sipariş durumu: </div>
-                  <div>{order.status}</div>
+                  <div>Sipariş fiyatı: </div>
+                  <div>{order.price} USD</div>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş numarası: </div>
