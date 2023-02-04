@@ -167,7 +167,6 @@ const user = ({ products }) => {
     }
   };
 
-  //get request to http://localhost:3000/orders/download/63dcb19f0b62b61f8c30722a
   //to download the file
   const downloadFile = async (file) => {
     try {
@@ -220,9 +219,10 @@ const user = ({ products }) => {
                   name: product.name,
                   id: product._id,
                   code: product.code,
+                  price: product.price,
                 })}
               >
-                Ürün Adı: {product.name} - Ürün Kodu: {product.code}
+                {product.name} - {product.code} - {product.price} USD
               </option>
             ))}
           </Form.Select>
@@ -232,13 +232,13 @@ const user = ({ products }) => {
           </Form.Group>
           <Form.Label>Renk Seçimi</Form.Label>
           <Form.Select aria-label="Renk" onChange={handleColor}>
-            <option>Vidala Brown</option>
-            <option>Vidala Dark Brown</option>
             <option>Crazy Brown</option>
             <option>Crazy Dark Brown</option>
-            <option>Black</option>
-            <option>Crazy Grey</option>
-            <option>Özel</option>
+            <option>Crazy Gray</option>
+            <option>Crazy Blue</option>
+            <option>Natural Black</option>
+            <option>Natural Brown</option>
+            <option>Natural Dark Brown</option>
           </Form.Select>
           <Form.Label>Boyut</Form.Label>
           <Form.Control
@@ -304,6 +304,10 @@ const user = ({ products }) => {
                 <div className="d-flex ">
                   <div>Not: </div>
                   {note && <div>{note}</div>}
+                </div>
+                <div className="d-flex ">
+                  <div>Fiyat: </div>
+                  {product && <div>{product.price} USD</div>}{" "}
                 </div>
               </div>{" "}
             </Modal.Body>
@@ -375,8 +379,6 @@ const user = ({ products }) => {
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş barkodu: </div>
-                  {/* <Image src={`/${order.file}`} width={100} height={100} />
-                  <div>{order.file}</div> */}
                   <Button
                     variant="info"
                     onClick={() => downloadFile(order._id)}
