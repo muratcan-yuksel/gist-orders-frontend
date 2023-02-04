@@ -143,6 +143,13 @@ const AdminPage = () => {
       {returnState()}
 
       <div className="d-flex flex-wrap"> {returnClients()}</div>
+      <div>
+        <label style={{ marginRight: "10px" }} htmlFor="">
+          Ödenen Tutar
+        </label>
+        <input style={{ marginRight: "10px" }} type="text" />
+        <button>Onayla</button>
+      </div>
       {orders &&
         orders.data.map((order) => {
           return (
