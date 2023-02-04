@@ -329,7 +329,13 @@ const user = ({ products }) => {
         {orders &&
           orders.data.map((order) => (
             <div key={order._id}>
-              <div style={{ border: "2px solid black" }}>
+              <div
+                style={{
+                  border: "2px solid black",
+                  marginBottom: "1rem",
+                  padding: "1rem",
+                }}
+              >
                 <Stack direction="horizontal" gap={3}>
                   <div>Ürün adı: </div>
                   <div>{order.name}</div>
@@ -371,7 +377,12 @@ const user = ({ products }) => {
                   <div>Sipariş barkodu: </div>
                   {/* <Image src={`/${order.file}`} width={100} height={100} />
                   <div>{order.file}</div> */}
-                  <button onClick={() => downloadFile(order._id)}>İndir</button>
+                  <Button
+                    variant="info"
+                    onClick={() => downloadFile(order._id)}
+                  >
+                    İndir
+                  </Button>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş durumu: </div>
