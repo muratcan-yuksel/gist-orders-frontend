@@ -121,6 +121,27 @@ const user = ({ products }) => {
       handleShow();
     }
   };
+
+  const incrementUserPayment = async (id, price) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:3000/users/${id}`,
+        {
+          toPay: price,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(res.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   //controls the modal
   const handleSubmit = async (event) => {
     // event.preventDefault();
@@ -148,6 +169,7 @@ const user = ({ products }) => {
       );
       console.log(res.status);
       if (res.status === 201) {
+        incrementUserPayment(userId, product.price);
         setOrderSuccess(true);
         setTimeout(() => {
           setOrderSuccess(false);
