@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
 import { getCookie, setCookie } from "cookies-next";
 import axios from "axios";
+import Button from "react-bootstrap/esm/Button";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -12,31 +13,32 @@ const AdminPage = () => {
   const router = useRouter();
   const [clients, setClients] = useState();
   const [orders, setOrders] = useState();
+  const [clientId, setClientId] = useState();
 
-  const generateTokens = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/auth/refresh",
-        {
-          token: refreshToken,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      console.log(response.data);
-      setAccessToken(response.data.accessToken);
-      setRefreshToken(response.data.refreshToken);
-      setCookie("accessToken", response.data.accessToken);
-      setCookie("refreshToken", response.data.refreshToken);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  //call the function in every 4 mins
-  setInterval(generateTokens, 240000);
+  // const generateTokens = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:3000/auth/refresh",
+  //       {
+  //         token: refreshToken,
+  //       },
+  //       {
+  //         headers: {
+  //           authorization: `Bearer ${accessToken}`,
+  //         },
+  //       }
+  //     );
+  //     console.log(response.data);
+  //     setAccessToken(response.data.accessToken);
+  //     setRefreshToken(response.data.refreshToken);
+  //     setCookie("accessToken", response.data.accessToken);
+  //     setCookie("refreshToken", response.data.refreshToken);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  // //call the function in every 4 mins
+  // setInterval(generateTokens, 24000000000);
 
   const getUser = async () => {
     try {
@@ -96,6 +98,11 @@ const AdminPage = () => {
     }
   };
 
+  const getClientId = (id) => {
+    console.log(id);
+    setClientId(id);
+  };
+
   function returnClients() {
     if (clients) {
       return clients.data.map((client) => {
@@ -103,7 +110,10 @@ const AdminPage = () => {
         if (client.isAdmin == false) {
           return (
             <button
-              onClick={() => clientOrders(client._id)}
+              onClick={() => {
+                clientOrders(client._id);
+                getClientId(client._id);
+              }}
               style={{ margin: "10px", border: "2px solid black" }}
               key={client._id}
             >
@@ -118,6 +128,29 @@ const AdminPage = () => {
       return <h1>Loading...</h1>;
     }
   }
+
+  //to download the file
+  const downloadFile = async (file) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/orders/download/${file}`,
+        {
+          responseType: "blob",
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+
+      const blob = new Blob([res.data], { type: res.data.type });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "file.pdf";
+      link.click();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const accessToken = getCookie("accessToken");
@@ -144,7 +177,7 @@ const AdminPage = () => {
         <label style={{ marginRight: "10px" }} htmlFor="">
           Ödenen Tutar
         </label>
-        <input style={{ marginRight: "10px" }} type="text" />
+        <input style={{ marginRight: "10px" }} type="number" />
         <button>Onayla</button>
       </div>
       {orders &&
@@ -167,6 +200,12 @@ const AdminPage = () => {
               <div>Adet: {order.quantity} </div>
               <div>Kişiselleştirme: {order.personalization} </div>
               <div>Not: {order.note} </div>
+              <div className="d-flex">
+                <div style={{ marginRight: "1rem" }}>Sipariş barkodu: </div>
+                <Button variant="info" onClick={() => downloadFile(order._id)}>
+                  İndir
+                </Button>
+              </div>
             </div>
           );
         })}
