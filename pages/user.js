@@ -179,6 +179,7 @@ const user = ({ products }) => {
 
     const formData = new FormData();
     formData.append("user", userId);
+    formData.append("userName", myUser.data.name);
     formData.append("stockCode", product.code);
     formData.append("name", product.name);
     formData.append("color", color);

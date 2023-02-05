@@ -92,6 +92,20 @@ const AdminPage = () => {
     }
   };
 
+  const getAllOrders = async () => {
+    try {
+      const orders = await axios.get("http://localhost:3000/orders", {
+        headers: {
+          authorization: `Bearer ${getCookie("accessToken")}`,
+        },
+      });
+      console.log(orders.data);
+      setOrders(orders.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const clientOrders = async (id) => {
     try {
       const orders = await axios.get(
@@ -252,7 +266,15 @@ const AdminPage = () => {
       {/* Rest of your admin page code */}
       {returnState()}
 
-      <div className="d-flex flex-wrap"> {returnClients()}</div>
+      <div className="d-flex flex-wrap">
+        <button
+          onClick={getAllOrders}
+          style={{ margin: "10px", border: "2px solid black" }}
+        >
+          <h1>Tüm siparişler</h1>
+        </button>{" "}
+        {returnClients()}
+      </div>
       <div style={{ margin: "1rem" }}>
         <label style={{ marginRight: "10px" }} htmlFor="">
           Ödenen Tutar
@@ -297,6 +319,7 @@ const AdminPage = () => {
               key={order._id}
             >
               <div>Ürün adı: {order.name}</div>
+              <div>Müşteri adı: {order.userName}</div>
               <div>Ürün kodu: {order.stockCode}</div>
               <div>Sipariş tarihi: {order.createdAt}</div>
               <div>Ürün fiyatı: {order.price}</div>
@@ -338,7 +361,7 @@ const AdminPage = () => {
                       deleteOrder();
                       handleClose();
                     }}
-                    variant="primary"
+                    variant="warning"
                   >
                     Onayla
                   </Button>
