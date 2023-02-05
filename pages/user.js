@@ -97,7 +97,12 @@ const user = ({ products }) => {
 
   function returnState() {
     if (myUser) {
-      return <h1>{myUser.data.name}</h1>;
+      return (
+        <div>
+          <h1>{myUser.data.name}</h1>
+          <h2>Kalan borç: {myUser.data.toPay} USD</h2>
+        </div>
+      );
     } else {
       return <h1>Loading...</h1>;
     }
