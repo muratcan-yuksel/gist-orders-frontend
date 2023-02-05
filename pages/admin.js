@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
 import { getCookie, setCookie } from "cookies-next";
 import axios from "axios";
-import Button from "react-bootstrap/esm/Button";
+import Button from "react-bootstrap/Button";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -14,6 +14,7 @@ const AdminPage = () => {
   const [clients, setClients] = useState();
   const [orders, setOrders] = useState();
   const [clientId, setClientId] = useState();
+  const [payment, setPayment] = useState();
 
   // const generateTokens = async () => {
   //   try {
@@ -152,6 +153,35 @@ const AdminPage = () => {
     }
   };
 
+  const getPaymentAmount = (e) => {
+    setPayment(e.target.value);
+    console.log(payment);
+  };
+
+  const handlePayment = async () => {
+    console.log(payment);
+    console.log(clientId);
+    try {
+      const response = await axios.patch(
+        `http://localhost:3000/users/${clientId}`,
+        {
+          toPay: "-" + payment.toString(),
+        },
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(response.data);
+      response.status == 200
+        ? alert("Ödeme başarılı")
+        : alert("Ödeme başarısız");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const accessToken = getCookie("accessToken");
     const refreshToken = getCookie("refreshToken");
@@ -177,8 +207,12 @@ const AdminPage = () => {
         <label style={{ marginRight: "10px" }} htmlFor="">
           Ödenen Tutar
         </label>
-        <input style={{ marginRight: "10px" }} type="number" />
-        <button>Onayla</button>
+        <input
+          onChange={getPaymentAmount}
+          style={{ marginRight: "10px" }}
+          type="number"
+        />
+        <button onClick={handlePayment}>Onayla</button>
       </div>
       {orders &&
         orders.data.map((order) => {
