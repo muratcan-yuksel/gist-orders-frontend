@@ -4,6 +4,8 @@ import jwt_decode from "jwt-decode";
 import { getCookie, setCookie } from "cookies-next";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import Modal from "react-bootstrap/Modal";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -15,6 +17,14 @@ const AdminPage = () => {
   const [orders, setOrders] = useState();
   const [clientId, setClientId] = useState();
   const [payment, setPayment] = useState();
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paymentError, setPaymentError] = useState(false);
+  const [orderId, setOrderId] = useState();
+  //modal stuff
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  //modal stuff ends
 
   // const generateTokens = async () => {
   //   try {
@@ -174,9 +184,49 @@ const AdminPage = () => {
         }
       );
       console.log(response.data);
-      response.status == 200
-        ? alert("Ödeme başarılı")
-        : alert("Ödeme başarısız");
+      if (response.status == 200) {
+        setPaymentSuccess(true);
+        setTimeout(() => {
+          setPaymentSuccess(false);
+        }, 3000);
+      } else {
+        setPaymentError(true);
+        setTimeout(() => {
+          setPaymentError(false);
+        }, 3000);
+      }
+      // : setPaymentError(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+
+  const deleteOrder = async () => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:3000/orders/${orderId}`,
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
+      console.log(res.data);
+      console.log(orderId);
+      //if succesfull do something
+      if (res.status == 200) {
+        setDeleteSuccess(true);
+        setTimeout(() => {
+          setDeleteSuccess(false);
+        }, 3000);
+      } else {
+        setDeleteError(true);
+        setTimeout(() => {
+          setDeleteError(false);
+        }, 3000);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -213,6 +263,26 @@ const AdminPage = () => {
           type="number"
         />
         <button onClick={handlePayment}>Onayla</button>
+        {paymentError && (
+          <Alert key="danger" variant="danger">
+            Ödeme başarısız oldu. Tekrar deneyin.
+          </Alert>
+        )}
+        {paymentSuccess && (
+          <Alert key="success" variant="success">
+            Müşterinin ödemesi başasıyla sisteme eklenmiştir.
+          </Alert>
+        )}{" "}
+        {deleteError && (
+          <Alert key="danger" variant="danger">
+            Sipariş silinemedi. Tekrar deneyin.
+          </Alert>
+        )}
+        {deleteSuccess && (
+          <Alert key="success" variant="success">
+            Sipariş başarıyla silindi!
+          </Alert>
+        )}
       </div>
       {orders &&
         orders.data.map((order) => {
@@ -223,6 +293,7 @@ const AdminPage = () => {
                 marginBottom: "10px",
                 padding: "1rem",
               }}
+              onClick={() => setOrderId(order._id)}
               key={order._id}
             >
               <div>Ürün adı: {order.name}</div>
@@ -240,6 +311,39 @@ const AdminPage = () => {
                   İndir
                 </Button>
               </div>
+              <Button onClick={handleShow} variant="danger">
+                Tamamla & Sil
+              </Button>
+
+              <Modal
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Ürün tamamlandı mı?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Eğer ürün tamamlandıysa ve gerekli bilgileri kaydettiyseniz,
+                  siparişi tamamlayıp silmek için "Onayla" butonuna basın. Bu
+                  işlem geri alınamaz.
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Vazgeç
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      deleteOrder();
+                      handleClose();
+                    }}
+                    variant="primary"
+                  >
+                    Onayla
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </div>
           );
         })}
