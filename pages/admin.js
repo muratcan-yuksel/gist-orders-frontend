@@ -6,6 +6,9 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Modal from "react-bootstrap/Modal";
+import Accordion from "react-bootstrap/Accordion";
+import Toast from "react-bootstrap/Toast";
+import Col from "react-bootstrap/Col";
 
 const AdminPage = () => {
   const userId = getCookie("userId");
@@ -25,6 +28,13 @@ const AdminPage = () => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   //modal stuff ends
+  const [createClientName, setCreateClientName] = useState();
+  const [createClientPass, setCreateClientPass] = useState();
+  //toast stuff
+  const [showB, setShowB] = useState(false);
+  const toggleShowB = () => setShowB(!showB);
+  const [clientDelete, setClientDelete] = useState(false);
+  //toast stuff ends
 
   // const generateTokens = async () => {
   //   try {
@@ -153,6 +163,56 @@ const AdminPage = () => {
       return <h1>Loading...</h1>;
     }
   }
+  //basically the above function, different styling etc.
+  const returnClientsToManage = () => {
+    if (clients) {
+      return clients.data.map((client) => {
+        //don't return the admin
+        if (client.isAdmin == false) {
+          return (
+            // <button
+            //   onClick={() => {
+            //     clientOrders(client._id);
+            //     getClientId(client._id);
+            //   }}
+            //   style={{ margin: "10px", border: "2px solid black" }}
+            //   key={client._id}
+            // >
+            //   <h1>{client.name}</h1>
+            //   <h2>Borç: {client.toPay}</h2>
+            // </button>
+            <div
+              style={{ margin: "10px", border: "1px solid black" }}
+              className="d-flex"
+              key={client.id}
+            >
+              <h3 style={{ marginRight: "1rem" }}>{client.name}</h3>
+              <Button
+                onClick={() => {
+                  toggleShowB();
+                  setClientDelete(client);
+                }}
+                variant="warning"
+              >
+                Müşteriyi Sil
+              </Button>
+            </div>
+          );
+        }
+      });
+      console.log(clients);
+    } else {
+      return <h1>Loading...</h1>;
+    }
+  };
+
+  const deleteClient = async (id) => {
+    id = deleteClient.id;
+    // try {
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
 
   //to download the file
   const downloadFile = async (file) => {
@@ -245,8 +305,21 @@ const AdminPage = () => {
       console.log(error);
     }
   };
+  const createClient = async () => {
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/users`,
+        { name: createClientName, password: createClientPass },
+        { headers: { authorization: `Bearer ${getCookie("accessToken")}` } }
+      );
+      console.log(res.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
+    getAllOrders();
     const accessToken = getCookie("accessToken");
     const refreshToken = getCookie("refreshToken");
     // setUser({ accessToken, refreshToken });
@@ -264,7 +337,64 @@ const AdminPage = () => {
     <div>
       <h1>Admin Paneli</h1>
       {/* Rest of your admin page code */}
-      {returnState()}
+      <div>
+        {" "}
+        <div> {returnState()} </div>
+        <Accordion defaultActiveKey="0">
+          <Accordion.Item eventKey="0">
+            <Accordion.Header>
+              {" "}
+              <h3>Müşteri Paneli</h3>
+            </Accordion.Header>
+            <Accordion.Body>
+              <div className="d-flex flex-wrap">
+                <div className="d-flex flex-column justify-content-center align-items-start">
+                  <input
+                    style={{ marginBottom: "10px" }}
+                    placeholder="müşteri adı"
+                    type="text"
+                    onChange={(e) => setCreateClientName(e.target.value)}
+                  />
+                  <input
+                    style={{ marginBottom: "10px" }}
+                    placeholder="müşteri şifresi"
+                    type="text"
+                    onChange={(e) => setCreateClientPass(e.target.value)}
+                  />
+                  <Button variant="primary" onClick={createClient}>
+                    Ekle
+                  </Button>
+
+                  {/* <Button onClick={toggleShowB} className="mb-2">
+                    Toggle Toast <strong>without</strong> Animation
+                  </Button> */}
+                  <Toast onClose={toggleShowB} show={showB} animation={false}>
+                    <Toast.Header>
+                      <img
+                        src="holder.js/20x20?text=%20"
+                        className="rounded me-2"
+                        alt=""
+                      />
+                      <strong className="me-auto">Müşteri Silinecek</strong>
+                      <small>11 mins ago</small>
+                    </Toast.Header>
+                    <Toast.Body>
+                      <div className="d-flex flex-column align-items-center">
+                        <strong>{clientDelete.name} </strong> müşterisini silmek
+                        istediğinize emin misiniz?
+                        <Button variant="danger" onClick={deleteClient}>
+                          Onayla
+                        </Button>
+                      </div>
+                    </Toast.Body>
+                  </Toast>
+                </div>
+                <div>{returnClientsToManage()}</div>
+              </div>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      </div>
 
       <div className="d-flex flex-wrap">
         <button
