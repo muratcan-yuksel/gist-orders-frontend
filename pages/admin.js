@@ -206,12 +206,19 @@ const AdminPage = () => {
     }
   };
 
-  const deleteClient = async (id) => {
-    id = deleteClient.id;
-    // try {
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const deleteClient = async () => {
+    let id = clientDelete._id;
+    try {
+      const res = await axios.delete(`http://localhost:3000/users/${id}`, {
+        headers: {
+          authorization: `Bearer ${getCookie("accessToken")}`,
+        },
+      });
+      console.log(res.status);
+      alert("Müşteri Silindi");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //to download the file
