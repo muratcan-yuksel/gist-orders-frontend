@@ -152,8 +152,8 @@ const AdminPage = () => {
               style={{ margin: "10px", border: "2px solid black" }}
               key={client._id}
             >
-              <h1>{client.name}</h1>
-              <h2>Borç: {client.toPay}</h2>
+              <div>{client.name}</div>
+              <div>Borç: {client.toPay}</div>
             </button>
           );
         }
@@ -170,20 +170,9 @@ const AdminPage = () => {
         //don't return the admin
         if (client.isAdmin == false) {
           return (
-            // <button
-            //   onClick={() => {
-            //     clientOrders(client._id);
-            //     getClientId(client._id);
-            //   }}
-            //   style={{ margin: "10px", border: "2px solid black" }}
-            //   key={client._id}
-            // >
-            //   <h1>{client.name}</h1>
-            //   <h2>Borç: {client.toPay}</h2>
-            // </button>
             <div
               style={{ margin: "10px", border: "1px solid black" }}
-              className="d-flex"
+              className="d-flex flex-wrap"
               key={client.id}
             >
               <h3 style={{ marginRight: "1rem" }}>{client.name}</h3>
@@ -395,8 +384,11 @@ const AdminPage = () => {
                       </div>
                     </Toast.Body>
                   </Toast>
+                  <div></div>
+                  <div className="d-flex flex-wrap">
+                    {returnClientsToManage()}
+                  </div>
                 </div>
-                <div>{returnClientsToManage()}</div>
               </div>
             </Accordion.Body>
           </Accordion.Item>
@@ -408,7 +400,7 @@ const AdminPage = () => {
           onClick={getAllOrders}
           style={{ margin: "10px", border: "2px solid black" }}
         >
-          <h1>Tüm siparişler</h1>
+          <h5>Tüm siparişler</h5>
         </button>{" "}
         {returnClients()}
       </div>
