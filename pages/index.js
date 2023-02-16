@@ -20,7 +20,7 @@ function index() {
     try {
       console.log("refresh called");
       const res = await axios.post(
-        "https://gist-orders-backend.onrender.com//auth/refresh",
+        "https://gist-orders-backend.onrender.com/auth/refresh",
         {
           token: user.refreshToken,
         }
@@ -60,7 +60,7 @@ function index() {
     console.log("password: ", password);
     try {
       const response = await axios.post(
-        "https://gist-orders-backend.onrender.com//users/login",
+        "https://gist-orders-backend.onrender.com/users/login",
         {
           name: username,
           password: password,

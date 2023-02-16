@@ -39,7 +39,7 @@ const AdminPage = () => {
   // const generateTokens = async () => {
   //   try {
   //     const response = await axios.post(
-  //       "https://gist-orders-backend.onrender.com//auth/refresh",
+  //       "https://gist-orders-backend.onrender.com/auth/refresh",
   //       {
   //         token: refreshToken,
   //       },
@@ -64,7 +64,7 @@ const AdminPage = () => {
   const getUser = async () => {
     try {
       const returnedUser = await axios.get(
-        `https://gist-orders-backend.onrender.com//users/${userId}`,
+        `https://gist-orders-backend.onrender.com/users/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -91,7 +91,7 @@ const AdminPage = () => {
   const getClients = async () => {
     try {
       const response = await axios.get(
-        "https://gist-orders-backend.onrender.com//users",
+        "https://gist-orders-backend.onrender.com/users",
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -108,7 +108,7 @@ const AdminPage = () => {
   const getAllOrders = async () => {
     try {
       const orders = await axios.get(
-        "https://gist-orders-backend.onrender.com//orders",
+        "https://gist-orders-backend.onrender.com/orders",
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -125,7 +125,7 @@ const AdminPage = () => {
   const clientOrders = async (id) => {
     try {
       const orders = await axios.get(
-        `https://gist-orders-backend.onrender.com//orders/user/${id}`,
+        `https://gist-orders-backend.onrender.com/orders/user/${id}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -205,7 +205,7 @@ const AdminPage = () => {
     let id = clientDelete._id;
     try {
       const res = await axios.delete(
-        `https://gist-orders-backend.onrender.com//users/${id}`,
+        `https://gist-orders-backend.onrender.com/users/${id}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -223,7 +223,7 @@ const AdminPage = () => {
   const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `https://gist-orders-backend.onrender.com//orders/download/${file}`,
+        `https://gist-orders-backend.onrender.com/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
@@ -252,7 +252,7 @@ const AdminPage = () => {
     console.log(clientId);
     try {
       const response = await axios.patch(
-        `https://gist-orders-backend.onrender.com//users/${clientId}`,
+        `https://gist-orders-backend.onrender.com/users/${clientId}`,
         {
           toPay: "-" + payment.toString(),
         },
@@ -285,7 +285,7 @@ const AdminPage = () => {
   const deleteOrder = async () => {
     try {
       const res = await axios.delete(
-        `https://gist-orders-backend.onrender.com//orders/${orderId}`,
+        `https://gist-orders-backend.onrender.com/orders/${orderId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -313,7 +313,7 @@ const AdminPage = () => {
   const createClient = async () => {
     try {
       const res = await axios.post(
-        `https://gist-orders-backend.onrender.com//users`,
+        `https://gist-orders-backend.onrender.com/users`,
         { name: createClientName, password: createClientPass },
         { headers: { authorization: `Bearer ${getCookie("accessToken")}` } }
       );
