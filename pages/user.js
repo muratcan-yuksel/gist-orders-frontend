@@ -39,7 +39,7 @@ const user = ({ products }) => {
   const generateTokens = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/auth/refresh",
+        "https://gist-orders-express-backend.vercel.app/auth/refresh",
         {
           token: refreshToken,
         },
@@ -80,7 +80,7 @@ const user = ({ products }) => {
   const getUser = async () => {
     try {
       const returnedUser = await axios.get(
-        `http://localhost:3000/users/${userId}`,
+        `https://gist-orders-express-backend.vercel.app/users/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -156,7 +156,7 @@ const user = ({ products }) => {
   const incrementUserPayment = async (id, price) => {
     try {
       const res = await axios.patch(
-        `http://localhost:3000/users/${id}`,
+        `https://gist-orders-express-backend.vercel.app/users/${id}`,
         {
           toPay: price,
         },
@@ -190,7 +190,7 @@ const user = ({ products }) => {
     formData.append("price", product.price);
     try {
       const res = await axios.post(
-        "http://localhost:3000/orders/create",
+        "https://gist-orders-express-backend.vercel.app/orders/create",
         formData,
         {
           headers: {
@@ -219,7 +219,7 @@ const user = ({ products }) => {
   const getOrdersByUser = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/orders/user/${userId}`,
+        `https://gist-orders-express-backend.vercel.app/orders/user/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -239,7 +239,7 @@ const user = ({ products }) => {
   const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/orders/download/${file}`,
+        `https://gist-orders-express-backend.vercel.app/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
@@ -488,7 +488,7 @@ const client = createClient({
 export async function getStaticProps() {
   const products = await client.fetch(`*[_type == "product"]`);
   // const orders = await axios.get(
-  //   "http://localhost:3000/orders/user/63d6edb95136e80b144a07f0"
+  //   "https://gist-orders-express-backend.vercel.app/orders/user/63d6edb95136e80b144a07f0"
   // );
 
   return {

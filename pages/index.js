@@ -19,9 +19,12 @@ function index() {
   const refreshToken = async () => {
     try {
       console.log("refresh called");
-      const res = await axios.post("http://localhost:3000/auth/refresh", {
-        token: user.refreshToken,
-      });
+      const res = await axios.post(
+        "https://gist-orders-express-backend.vercel.app/auth/refresh",
+        {
+          token: user.refreshToken,
+        }
+      );
       setUser({
         ...user,
         accessToken: res.data.accessToken,
@@ -56,10 +59,13 @@ function index() {
     console.log("username: ", username);
     console.log("password: ", password);
     try {
-      const response = await axios.post("http://localhost:3000/users/login", {
-        name: username,
-        password: password,
-      });
+      const response = await axios.post(
+        "https://gist-orders-express-backend.vercel.app/users/login",
+        {
+          name: username,
+          password: password,
+        }
+      );
       const { accessToken, refreshToken, userId, isAdmin } = response.data;
       setUser(response.data);
       console.log(response.data);

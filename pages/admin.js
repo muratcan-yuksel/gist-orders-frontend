@@ -39,7 +39,7 @@ const AdminPage = () => {
   // const generateTokens = async () => {
   //   try {
   //     const response = await axios.post(
-  //       "http://localhost:3000/auth/refresh",
+  //       "https://gist-orders-express-backend.vercel.app/auth/refresh",
   //       {
   //         token: refreshToken,
   //       },
@@ -64,7 +64,7 @@ const AdminPage = () => {
   const getUser = async () => {
     try {
       const returnedUser = await axios.get(
-        `http://localhost:3000/users/${userId}`,
+        `https://gist-orders-express-backend.vercel.app/users/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -90,11 +90,14 @@ const AdminPage = () => {
   //get all clients from db
   const getClients = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/users", {
-        headers: {
-          authorization: `Bearer ${getCookie("accessToken")}`,
-        },
-      });
+      const response = await axios.get(
+        "https://gist-orders-express-backend.vercel.app/users",
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
       console.log(response.data);
       setClients(response.data);
     } catch (error) {
@@ -104,11 +107,14 @@ const AdminPage = () => {
 
   const getAllOrders = async () => {
     try {
-      const orders = await axios.get("http://localhost:3000/orders", {
-        headers: {
-          authorization: `Bearer ${getCookie("accessToken")}`,
-        },
-      });
+      const orders = await axios.get(
+        "https://gist-orders-express-backend.vercel.app/orders",
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
       console.log(orders.data);
       setOrders(orders.data);
     } catch (error) {
@@ -119,7 +125,7 @@ const AdminPage = () => {
   const clientOrders = async (id) => {
     try {
       const orders = await axios.get(
-        `http://localhost:3000/orders/user/${id}`,
+        `https://gist-orders-express-backend.vercel.app/orders/user/${id}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -198,11 +204,14 @@ const AdminPage = () => {
   const deleteClient = async () => {
     let id = clientDelete._id;
     try {
-      const res = await axios.delete(`http://localhost:3000/users/${id}`, {
-        headers: {
-          authorization: `Bearer ${getCookie("accessToken")}`,
-        },
-      });
+      const res = await axios.delete(
+        `https://gist-orders-express-backend.vercel.app/users/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${getCookie("accessToken")}`,
+          },
+        }
+      );
       console.log(res.status);
       alert("Müşteri Silindi");
     } catch (error) {
@@ -214,7 +223,7 @@ const AdminPage = () => {
   const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `http://localhost:3000/orders/download/${file}`,
+        `https://gist-orders-express-backend.vercel.app/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
@@ -243,7 +252,7 @@ const AdminPage = () => {
     console.log(clientId);
     try {
       const response = await axios.patch(
-        `http://localhost:3000/users/${clientId}`,
+        `https://gist-orders-express-backend.vercel.app/users/${clientId}`,
         {
           toPay: "-" + payment.toString(),
         },
@@ -276,7 +285,7 @@ const AdminPage = () => {
   const deleteOrder = async () => {
     try {
       const res = await axios.delete(
-        `http://localhost:3000/orders/${orderId}`,
+        `https://gist-orders-express-backend.vercel.app/orders/${orderId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -304,7 +313,7 @@ const AdminPage = () => {
   const createClient = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:3000/users`,
+        `https://gist-orders-express-backend.vercel.app/users`,
         { name: createClientName, password: createClientPass },
         { headers: { authorization: `Bearer ${getCookie("accessToken")}` } }
       );
