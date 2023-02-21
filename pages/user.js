@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-// import { DataContext } from "../context/context";
+import { DataContext } from "../context/context";
 import { createClient } from "next-sanity";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -13,7 +13,7 @@ import Alert from "react-bootstrap/Alert";
 //import home.module.css
 import styles from "../styles/Home.module.css";
 const user = ({ products }) => {
-  // const [context, setContext] = useContext(DataContext);
+  const [context, setContext] = useContext(DataContext);
   const userId = getCookie("userId");
   const [myUser, setMyUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +36,10 @@ const user = ({ products }) => {
   const [accessToken, setAccessToken] = useState(getCookie("accessToken"));
   const [refreshToken, setRefreshToken] = useState(getCookie("refreshToken"));
   const router = useRouter();
+
+  const incrementContext = () => {
+    setContext(Number(context) + 1);
+  };
 
   const generateTokens = async () => {
     try {
@@ -76,7 +80,7 @@ const user = ({ products }) => {
     checkAuth();
     getUser();
     getOrdersByUser();
-  }, []);
+  }, [context]);
 
   const getUser = async () => {
     try {
@@ -209,6 +213,7 @@ const user = ({ products }) => {
         setTimeout(() => {
           setOrderSuccess(false);
         }, 3000);
+        incrementContext();
       }
     } catch (error) {
       console.log(error);
