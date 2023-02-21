@@ -10,7 +10,8 @@ import Image from "next/image";
 import { getCookie, setCookie } from "cookies-next";
 import Stack from "react-bootstrap/Stack";
 import Alert from "react-bootstrap/Alert";
-
+//import home.module.css
+import styles from "../styles/Home.module.css";
 const user = ({ products }) => {
   // const [context, setContext] = useContext(DataContext);
   const userId = getCookie("userId");
@@ -442,8 +443,11 @@ const user = ({ products }) => {
                   <div>{order.personalization}</div>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
-                  <div>Not: </div>
-                  <div>{order.note}</div>
+                  {/* breakNote is not working at all */}
+                  <div className={styles.breakNote} style={{ width: "500px" }}>
+                    <div>Not: </div>
+                    <div className={styles.breakNote}>{order.note}</div>
+                  </div>
                 </Stack>{" "}
                 <Stack direction="horizontal" gap={3}>
                   <div>Sipariş tarihi: </div>
