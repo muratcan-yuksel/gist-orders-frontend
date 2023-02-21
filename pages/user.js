@@ -120,8 +120,8 @@ const user = ({ products }) => {
 
   const handleProductChoice = (event) => {
     console.log(event.target.value);
-    console.log(JSON.parse(event.target.value));
-    setProduct(JSON.parse(event.target.value));
+    // console.log(JSON.parse(event.target.value));
+    setProduct(event.target.value);
   };
 
   const handleColor = (event) => {
@@ -177,17 +177,19 @@ const user = ({ products }) => {
   const handleSubmit = async (event) => {
     // event.preventDefault();
 
+    let parsedProduct = JSON.parse(product);
+
     const formData = new FormData();
     formData.append("user", userId);
     formData.append("userName", myUser.data.name);
-    formData.append("stockCode", product.code);
-    formData.append("name", product.name);
+    formData.append("stockCode", parsedProduct.code);
+    formData.append("name", parsedProduct.name);
     formData.append("color", color);
     formData.append("size", size);
     formData.append("personalization", personalization);
     formData.append("note", note);
     formData.append("file", fileInputRef.current.files[0]);
-    formData.append("price", product.price);
+    formData.append("price", parsedProduct.price);
     try {
       const res = await axios.post(
         "https://gist-orders-backend.onrender.com/orders/create",
@@ -201,7 +203,7 @@ const user = ({ products }) => {
       );
       console.log(res.status);
       if (res.status === 201) {
-        incrementUserPayment(userId, product.price);
+        incrementUserPayment(userId, parsedProduct.price);
         setOrderSuccess(true);
         setTimeout(() => {
           setOrderSuccess(false);
