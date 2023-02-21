@@ -9,8 +9,10 @@ import Modal from "react-bootstrap/Modal";
 import Accordion from "react-bootstrap/Accordion";
 import Toast from "react-bootstrap/Toast";
 import Col from "react-bootstrap/Col";
+import { DataContext } from "../context/context";
 
 const AdminPage = () => {
+  const [context, setContext] = useContext(DataContext);
   const userId = getCookie("userId");
   const [accessToken, setAccessToken] = useState(getCookie("accessToken"));
   const [refreshToken, setRefreshToken] = useState(getCookie("refreshToken"));
@@ -60,6 +62,10 @@ const AdminPage = () => {
   // };
   // //call the function in every 4 mins
   // setInterval(generateTokens, 24000000000);
+
+  const incrementContext = () => {
+    setContext(Number(context) + 1);
+  };
 
   const getUser = async () => {
     try {
@@ -214,6 +220,7 @@ const AdminPage = () => {
       );
       console.log(res.status);
       alert("Müşteri Silindi");
+      incrementContext();
     } catch (error) {
       console.log(error);
     }
@@ -275,6 +282,7 @@ const AdminPage = () => {
         }, 3000);
       }
       // : setPaymentError(true);
+      incrementContext();
     } catch (error) {
       console.log(error);
     }
@@ -300,6 +308,7 @@ const AdminPage = () => {
         setTimeout(() => {
           setDeleteSuccess(false);
         }, 3000);
+        incrementContext();
       } else {
         setDeleteError(true);
         setTimeout(() => {
@@ -336,7 +345,7 @@ const AdminPage = () => {
       // Redirect to a 404 error page if the user is not an admin
       router.push("/error");
     }
-  }, []);
+  }, [context]);
 
   return (
     <div>
