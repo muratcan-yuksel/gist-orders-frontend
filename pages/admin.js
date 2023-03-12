@@ -230,7 +230,7 @@ const AdminPage = () => {
   const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `https://gist-orders-backend.onrender.com/orders/download/${file}`,
+        `http://localhost:3000/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
