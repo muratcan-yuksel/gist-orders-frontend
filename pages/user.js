@@ -44,7 +44,7 @@ const user = ({ products }) => {
   const generateTokens = async () => {
     try {
       const response = await axios.post(
-        "https://gist-orders-backend.onrender.com/auth/refresh",
+        "https://gist-orders-dockerized.onrender.com/auth/refresh",
         {
           token: refreshToken,
         },
@@ -85,7 +85,7 @@ const user = ({ products }) => {
   const getUser = async () => {
     try {
       const returnedUser = await axios.get(
-        `https://gist-orders-backend.onrender.com/users/${userId}`,
+        `https://gist-orders-dockerized.onrender.com/users/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -161,7 +161,7 @@ const user = ({ products }) => {
   const incrementUserPayment = async (id, price) => {
     try {
       const res = await axios.patch(
-        `https://gist-orders-backend.onrender.com/users/${id}`,
+        `https://gist-orders-dockerized.onrender.com/users/${id}`,
         {
           toPay: price,
         },
@@ -197,7 +197,7 @@ const user = ({ products }) => {
     formData.append("price", product.price);
     try {
       const res = await axios.post(
-        "https://gist-orders-backend.onrender.com/orders/create",
+        "https://gist-orders-dockerized.onrender.com/orders/create",
         formData,
         {
           headers: {
@@ -227,7 +227,7 @@ const user = ({ products }) => {
   const getOrdersByUser = async () => {
     try {
       const res = await axios.get(
-        `https://gist-orders-backend.onrender.com/orders/user/${userId}`,
+        `https://gist-orders-dockerized.onrender.com/orders/user/${userId}`,
         {
           headers: {
             authorization: `Bearer ${getCookie("accessToken")}`,
@@ -247,7 +247,7 @@ const user = ({ products }) => {
   const downloadFile = async (file) => {
     try {
       const res = await axios.get(
-        `https://gist-orders-backend.onrender.com/orders/download/${file}`,
+        `https://gist-orders-dockerized.onrender.com/orders/download/${file}`,
         {
           responseType: "blob",
           headers: {
@@ -499,7 +499,7 @@ const client = createClient({
 export async function getStaticProps() {
   const products = await client.fetch(`*[_type == "product"]`);
   // const orders = await axios.get(
-  //   "https://gist-orders-backend.onrender.com/orders/user/63d6edb95136e80b144a07f0"
+  //   "https://gist-orders-dockerized.onrender.com/orders/user/63d6edb95136e80b144a07f0"
   // );
 
   return {
